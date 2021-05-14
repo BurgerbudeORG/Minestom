@@ -132,7 +132,7 @@ public class FakePlayer extends Player implements NavigableEntity {
         super.showPlayer(connection);
         if (!option.isInTabList()) {
             // Remove from tab-list
-            MinecraftServer.getSchedulerManager().buildTask(() -> connection.sendPacket(getRemovePlayerToList())).delay(20, TimeUnit.TICK).schedule();
+            MinecraftServer.getSchedulerManager().buildTask(() -> connection.sendPacket(getRemovePlayerFromList())).delay(20, TimeUnit.TICK).schedule();
         }
 
     }

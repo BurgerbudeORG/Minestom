@@ -509,6 +509,7 @@ public class Player extends LivingEntity implements CommandSender, Localizable, 
             return;
 
         callEvent(PlayerDisconnectEvent.class, new PlayerDisconnectEvent(this));
+        this.sendPacketsToViewers(this.getRemovePlayerFromList());
 
         super.remove();
         this.packets.clear();
@@ -565,7 +566,6 @@ public class Player extends LivingEntity implements CommandSender, Localizable, 
         }
 
         PlayerConnection viewerConnection = player.getPlayerConnection();
-        viewerConnection.sendPacket(getRemovePlayerToList());
 
         // Team
         if (this.getTeam() != null && this.getTeam().getMembers().size() == 1) {// If team only contains "this" player
@@ -1230,7 +1230,7 @@ public class Player extends LivingEntity implements CommandSender, Localizable, 
         DestroyEntitiesPacket destroyEntitiesPacket = new DestroyEntitiesPacket();
         destroyEntitiesPacket.entityIds = new int[]{getEntityId()};
 
-        final PlayerInfoPacket removePlayerPacket = getRemovePlayerToList();
+        final PlayerInfoPacket removePlayerPacket = this.getRemovePlayerFromList();
         final PlayerInfoPacket addPlayerPacket = getAddPlayerToList();
 
         RespawnPacket respawnPacket = new RespawnPacket();
@@ -2409,9 +2409,21 @@ public class Player extends LivingEntity implements CommandSender, Localizable, 
      * Gets the packet to remove the player from the tab-list.
      *
      * @return a {@link PlayerInfoPacket} to remove the player
+     * @deprecated The method has a misleading name, use {@link #getRemovePlayerFromList()}
      */
+    @Deprecated(forRemoval = true)
     @NotNull
     protected PlayerInfoPacket getRemovePlayerToList() {
+        return this.getRemovePlayerFromList();
+    }
+
+    /**
+     * Retrieves the packet to remove the player from the tab-list.
+     *
+     * @return a {@link PlayerInfoPacket} to remove the player.
+     */
+    @NotNull
+    protected PlayerInfoPacket getRemovePlayerFromList() {
         PlayerInfoPacket playerInfoPacket = new PlayerInfoPacket(PlayerInfoPacket.Action.REMOVE_PLAYER);
 
         PlayerInfoPacket.RemovePlayer removePlayer =
